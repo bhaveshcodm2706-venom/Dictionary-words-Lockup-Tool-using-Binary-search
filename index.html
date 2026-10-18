@@ -5,108 +5,1241 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#0b1020">
-  <title>Dictionary word Lockup Tool using Binary search</title>
-  <link rel="stylesheet" href="style.css">
+
+  <title>LexiSearch | Binary Search Lab</title>
+
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #131b2e;
+      --panel-light: #1b2640;
+      --border: #2b3853;
+      --text: #f1f5ff;
+      --muted: #9caecb;
+      --purple: #8b7cff;
+      --purple-dark: #5544e8;
+      --green: #34d399;
+      --red: #fb7185;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(ellipse at 15% 0%, #24205a 0, transparent 38%),
+        radial-gradient(ellipse at 100% 30%, #102f48 0, transparent 32%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s, opacity 0.2s;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 0;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #8b5cf6, #4f46e5);
+      box-shadow: 0 0 28px #6655ee45;
+      font-size: 24px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 23px;
+      letter-spacing: -0.7px;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+    }
+
+    .status-pill {
+      border: 1px solid #315b50;
+      background: #12352e;
+      color: #86efac;
+      border-radius: 30px;
+      padding: 9px 13px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .hero {
+      padding: 45px 0 25px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 12px;
+      color: #c4b5fd;
+      background: #5141a325;
+      border: 1px solid #8172e54d;
+      border-radius: 30px;
+      font-size: 12px;
+      margin-bottom: 15px;
+    }
+
+    .hero h2 {
+      font-size: clamp(30px, 5vw, 49px);
+      line-height: 1.13;
+      letter-spacing: -1.8px;
+      margin: 0;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #a78bfa, #67e8f9);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero > p {
+      max-width: 620px;
+      margin: 16px auto 0;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .panel {
+      background: linear-gradient(
+        145deg,
+        rgba(25, 35, 57, 0.96),
+        rgba(16, 24, 42, 0.96)
+      );
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 14px 40px #00000016;
+      min-width: 0;
+    }
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 17px;
+    }
+
+    .panel-heading h3 {
+      margin: 0;
+      font-size: 19px;
+    }
+
+    .subtext {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-row input {
+      flex: 1;
+      width: 100%;
+      min-width: 0;
+      padding: 15px 16px;
+      color: white;
+      background: #0b1020;
+      border: 1px solid #394965;
+      border-radius: 12px;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px #8b7cff24;
+    }
+
+    .primary-btn {
+      color: white;
+      border: 0;
+      border-radius: 12px;
+      padding: 14px 21px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #8b5cf6, #5145e5);
+      box-shadow: 0 6px 20px #6255df30;
+    }
+
+    .primary-btn:hover {
+      filter: brightness(1.13);
+    }
+
+    .secondary-btn {
+      color: #e2e8f0;
+      background: #202b43;
+      border: 1px solid #3a4965;
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .secondary-btn:hover:not(:disabled) {
+      background: #2a3856;
+    }
+
+    .result {
+      margin-top: 17px;
+      border-radius: 13px;
+      background: #0b1020;
+      border: 1px solid var(--border);
+      padding: 17px;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .result.found {
+      border-color: #268e6c;
+      background: linear-gradient(110deg, #10382e, #0d1f28);
+      animation: resultIn 0.45s ease both;
+    }
+
+    .result.not-found {
+      border-color: #8b4357;
+    }
+
+    .result h4 {
+      margin: 0 0 5px;
+      font-size: 21px;
+    }
+
+    .result p {
+      margin: 0;
+      color: #cbd5e1;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .metric {
+      background: #10182a;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 15px;
+      min-width: 0;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .metric strong {
+      font-size: 23px;
+      overflow-wrap: anywhere;
+    }
+
+    .visualization {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: stretch;
+      min-height: 68px;
+    }
+
+    .word-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1 1 105px;
+      min-width: 0;
+      min-height: 78px;
+      padding: 12px 7px;
+      border: 1px solid #33435f;
+      border-radius: 13px;
+      background: #172238;
+      color: #e2e8f0;
+      overflow-wrap: anywhere;
+      text-align: center;
+      transition:
+        opacity 0.35s,
+        transform 0.35s,
+        border-color 0.35s,
+        background 0.35s,
+        box-shadow 0.35s;
+      animation: cardIn 0.35s ease both;
+    }
+
+    .word-card .index {
+      font-size: 10px;
+      color: #8193b3;
+      margin-bottom: 7px;
+    }
+
+    .word-card .word {
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .word-card .role {
+      margin-top: 6px;
+      font-size: 10px;
+      color: #c4b5fd;
+      min-height: 12px;
+    }
+
+    .word-card.in-range {
+      border-color: #526589;
+      background: #202d47;
+    }
+
+    .word-card.outside {
+      opacity: 0.22;
+      transform: scale(0.94);
+      filter: grayscale(0.7);
+    }
+
+    .word-card.middle {
+      border: 2px solid #a99bff;
+      background: linear-gradient(145deg, #5540bd, #30266e);
+      box-shadow: 0 0 25px #8b7cff45;
+      transform: translateY(-5px);
+    }
+
+    .word-card.middle .index,
+    .word-card.middle .role {
+      color: #e0d9ff;
+    }
+
+    .word-card.found {
+      border: 2px solid #34d399;
+      background: linear-gradient(145deg, #126749, #104536);
+      box-shadow: 0 0 25px #34d39930;
+      transform: translateY(-5px);
+    }
+
+    .word-card.found .index,
+    .word-card.found .role {
+      color: #bbf7d0;
+    }
+
+    .empty-state {
+      color: var(--muted);
+      padding: 20px 0;
+      font-size: 14px;
+    }
+
+    .animation-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 21px;
+    }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    select {
+      background: #0b1020;
+      color: white;
+      border: 1px solid #3a4965;
+      padding: 10px;
+      border-radius: 9px;
+    }
+
+    .progress-track {
+      margin-top: 20px;
+      height: 6px;
+      background: #29354c;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #8b5cf6, #67e8f9);
+      border-radius: 20px;
+      transition: width 0.4s ease;
+    }
+
+    .step-explanation {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #574ba2;
+      border-radius: 15px;
+      background: linear-gradient(120deg, #29235a70, #10182a);
+    }
+
+    .step-label {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 7px;
+      background: #5141a34a;
+      color: #c4b5fd;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .step-explanation h4 {
+      font-size: 19px;
+      margin: 13px 0 8px;
+    }
+
+    .step-explanation p {
+      color: #cbd5e1;
+      font-size: 14px;
+      line-height: 1.85;
+      margin: 0;
+    }
+
+    .dictionary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      gap: 10px;
+    }
+
+    .dictionary-item {
+      padding: 12px;
+      text-align: left;
+      background: #10182a;
+      border: 1px solid #2d3b56;
+      color: #e2e8f0;
+      border-radius: 11px;
+    }
+
+    .dictionary-item:hover {
+      border-color: var(--purple);
+      background: #24244b;
+    }
+
+    .dictionary-item span {
+      display: block;
+      color: #8fa1c0;
+      font-size: 11px;
+      margin-top: 5px;
+    }
+
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .concept-card {
+      background: #10182a;
+      border: 1px solid var(--border);
+      padding: 17px;
+      border-radius: 13px;
+    }
+
+    .concept-card .concept-icon {
+      font-size: 23px;
+      margin-bottom: 10px;
+    }
+
+    .concept-card h4 {
+      margin: 0 0 7px;
+      font-size: 15px;
+    }
+
+    .concept-card p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .complexity {
+      color: #c4b5fd;
+      font-weight: 700;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 15px 0 35px;
+      color: #71809d;
+      font-size: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(9px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes resultIn {
+      from { opacity: 0.4; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 650px) {
+      .container {
+        width: calc(100% - 22px);
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .status-pill {
+        font-size: 10px;
+      }
+
+      .hero {
+        padding-top: 32px;
+      }
+
+      .panel {
+        padding: 17px;
+        border-radius: 16px;
+      }
+
+      .metrics {
+        gap: 7px;
+      }
+
+      .metric {
+        padding: 11px;
+      }
+
+      .metric strong {
+        font-size: 18px;
+      }
+
+      .word-card {
+        flex-basis: 78px;
+      }
+
+      .concept-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .speed-control {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .search-row {
+        flex-direction: column;
+      }
+
+      .search-row .primary-btn {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <main class="app">
-    <header class="header">
-      <div class="logo">♧</div>
-      <div>
-        <h1>LexiSearch</h1>
-        <p class="subtitle">DICTIONARY · BINARY SEARCH LAB</p>
+  <div class="container">
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">⌕</div>
+        <div>
+          <h1>LexiSearch</h1>
+          <p>BINARY SEARCH LAB</p>
+        </div>
       </div>
-      <span class="status">● Interactive</span>
+      <div class="status-pill" id="connectionStatus">
+        ● Connecting...
+      </div>
     </header>
 
-    <section class="intro">
-      <h2>Find any word.</h2>
-      <p>Explore word meanings and see how binary search finds a match.</p>
-
-      <form id="searchForm" class="search-bar">
-        <span class="search-icon">⌕</span>
-        <input id="wordInput" type="text"
-          placeholder="Enter a word, e.g. algorithm"
-          autocomplete="off" required>
-        <button type="submit" id="searchButton">Search</button>
-      </form>
-      <p id="message" class="message" aria-live="polite">
-        Enter a word to begin.
+    <section class="hero">
+      <div class="eyebrow">✦ LEARN BY WATCHING</div>
+      <h2>Search smarter with<br>
+        <span class="gradient-text">Binary Search</span>
+      </h2>
+      <p>
+        Discover word meanings and watch the algorithm work.
+        Every step shows the middle word, the remaining search
+        range and why half of the dictionary can be eliminated.
       </p>
     </section>
 
-    <section class="index-grid">
-      <div class="index-card">
-        <span>Low</span>
-        <strong id="lowValue">—</strong>
-      </div>
-      <div class="index-card middle-card">
-        <span>Middle</span>
-        <strong id="middleValue">—</strong>
-      </div>
-      <div class="index-card">
-        <span>High</span>
-        <strong id="highValue">—</strong>
-      </div>
-    </section>
+    <main>
+      <section class="panel">
+        <div class="panel-heading">
+          <h3>⌕ Dictionary Search</h3>
+          <span class="subtext" id="dictionaryCount">Loading words...</span>
+        </div>
 
-    <section class="panel">
-      <div class="panel-heading">
-        <h3>Search visualization</h3>
-        <span class="step-badge" id="stepBadge">Ready</span>
-      </div>
+        <form class="search-row" id="searchForm">
+          <input
+            id="wordInput"
+            type="text"
+            placeholder="Try algorithm, binary or python..."
+            autocomplete="off"
+            required
+          >
+          <button class="primary-btn" id="searchButton" type="submit">
+            Search Word →
+          </button>
+        </form>
 
-      <div id="wordArray" class="word-array">
-        <p class="empty-state">Search for a word to visualize the algorithm.</p>
-      </div>
+        <div class="result" id="result" aria-live="polite">
+          Enter a word above to discover its meaning.
+        </div>
+      </section>
 
-      <p id="stepExplanation" class="explanation">
-        The algorithm compares the target word with the middle word.
-      </p>
+      <section class="panel" id="lab">
+        <div class="panel-heading">
+          <h3>⚡ Live Search Visualizer</h3>
+          <span class="subtext" id="stepCounter">Ready to start</span>
+        </div>
 
-      <div class="controls">
-        <button type="button" id="previousButton" class="secondary" disabled>
-          ← Previous
-        </button>
-        <button type="button" id="playButton" disabled>
-          ▶ Play
-        </button>
-        <button type="button" id="nextButton" disabled>
-          Next Step →
-        </button>
-        <button type="button" id="resetButton" class="secondary" disabled>
-          ↻ Reset
-        </button>
-      </div>
-    </section>
+        <p class="subtext">
+          Purple identifies the middle word. Faded cards are outside
+          the current search range. Green identifies the target word
+          when it is found.
+        </p>
 
-    <section class="panel definition-panel">
-      <h3>Word definition</h3>
-      <h2 id="resultWord">Waiting for a search...</h2>
-      <p id="definition">The word meaning will appear here.</p>
-      <div class="result-meta">
-        <span id="comparisonCount">Comparisons: 0</span>
-        <span id="resultStatus">Status: Ready</span>
-      </div>
-    </section>
+        <div class="metrics">
+          <div class="metric">
+            <span>LOW INDEX</span>
+            <strong id="lowValue">—</strong>
+          </div>
+          <div class="metric">
+            <span>MIDDLE INDEX</span>
+            <strong id="middleValue">—</strong>
+          </div>
+          <div class="metric">
+            <span>HIGH INDEX</span>
+            <strong id="highValue">—</strong>
+          </div>
+        </div>
 
-    <section class="panel">
-      <h3>How binary search works</h3>
-      <ol class="instructions">
-        <li>Start with the lowest and highest indexes.</li>
-        <li>Calculate the middle index.</li>
-        <li>Compare the middle word with the target.</li>
-        <li>Discard half of the remaining search range.</li>
-        <li>Repeat until the word is found or the range is empty.</li>
-      </ol>
-    </section>
+        <div class="visualization" id="visualization">
+          <div class="empty-state">
+            Search for a word to begin the visualization.
+          </div>
+        </div>
 
-    <footer>
-      <p>Built with HTML, CSS, JavaScript and Python Flask.</p>
-      <p>Binary Search · Data Structures Project</p>
+        <div class="progress-track">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="animation-controls">
+          <button class="primary-btn" id="playButton" disabled>
+            ▶ Start Animation
+          </button>
+          <button class="secondary-btn" id="prevButton" disabled>
+            ← Previous
+          </button>
+          <button class="secondary-btn" id="nextButton" disabled>
+            Next Step →
+          </button>
+          <button class="secondary-btn" id="resetButton" disabled>
+            ↺ Reset
+          </button>
+
+          <label class="speed-control">
+            Animation speed
+            <select id="speedSelect">
+              <option value="1600">Slow</option>
+              <option value="900" selected>Normal</option>
+              <option value="400">Fast</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="step-explanation" id="explanation">
+          <span class="step-label">Learn the algorithm</span>
+          <h4>How does binary search work?</h4>
+          <p>
+            Binary search works on a sorted list. It checks the middle
+            element and keeps only the half that may contain the target.
+            Use Search Word to see this process step by step.
+          </p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <h3>📚 Dictionary A–Z</h3>
+          <span class="subtext">Select a word to search</span>
+        </div>
+        <div class="dictionary-grid" id="dictionaryList">
+          <div class="empty-state">Loading dictionary...</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <h3>🎓 Understand Binary Search</h3>
+        </div>
+
+        <div class="concept-grid">
+          <article class="concept-card">
+            <div class="concept-icon">↕️</div>
+            <h4>1. Sorted Data</h4>
+            <p>
+              Words must be in alphabetical order before binary search
+              can determine which half to keep.
+            </p>
+          </article>
+
+          <article class="concept-card">
+            <div class="concept-icon">🎯</div>
+            <h4>2. Find the Middle</h4>
+            <p>
+              Calculate the middle index using
+              (low + high) // 2 and inspect the word at that position.
+            </p>
+          </article>
+
+          <article class="concept-card">
+            <div class="concept-icon">✂️</div>
+            <h4>3. Reduce the Range</h4>
+            <p>
+              Keep the left or right half based on alphabetical order.
+              Repeat until the target is found or the range is empty.
+            </p>
+          </article>
+        </div>
+
+        <div class="step-explanation" style="margin-top:16px">
+          <span class="step-label">Algorithm efficiency</span>
+          <h4>Why is binary search efficient?</h4>
+          <p>
+            Each unsuccessful step discards approximately half of the
+            remaining candidates. Its worst-case time complexity is
+            <span class="complexity">O(log n)</span>, provided the
+            input is sorted and random access is available.
+            The iterative implementation uses
+            <span class="complexity">O(1)</span> auxiliary search space,
+            excluding the saved visualization steps.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      LexiSearch · Dictionary Word Lookup Tool using Binary Search · Python + Flask
     </footer>
-  </main>
+  </div>
 
-  <script src="script.js"></script>
+  <script>
+    // IMPORTANT: Replace this with your actual Render service URL.
+    const API_URL = " https://dictionary-words-lockup-tool-using.onrender.com";
+
+    const $ = id => document.getElementById(id);
+
+    const wordInput = $("wordInput");
+    const searchForm = $("searchForm");
+    const searchButton = $("searchButton");
+    const connectionStatus = $("connectionStatus");
+    const dictionaryCount = $("dictionaryCount");
+    const dictionaryList = $("dictionaryList");
+    const resultBox = $("result");
+    const visualization = $("visualization");
+    const explanation = $("explanation");
+    const stepCounter = $("stepCounter");
+    const playButton = $("playButton");
+    const prevButton = $("prevButton");
+    const nextButton = $("nextButton");
+    const resetButton = $("resetButton");
+    const speedSelect = $("speedSelect");
+    const progressBar = $("progressBar");
+
+    let words = [];
+    let searchSteps = [];
+    let targetWord = "";
+    let currentStep = -1;
+    let found = false;
+    let playing = false;
+    let timer = null;
+    let requestNumber = 0;
+
+    function stopAnimation() {
+      playing = false;
+
+      if (timer !== null) {
+        clearTimeout(timer);
+        timer = null;
+      }
+
+      playButton.textContent = "▶ Start Animation";
+    }
+
+    function setConnection(connected) {
+      connectionStatus.textContent = connected
+        ? "● Backend connected"
+        : "● Backend unavailable";
+
+      connectionStatus.style.background = connected
+        ? "#12352e"
+        : "#49212c";
+
+      connectionStatus.style.color = connected
+        ? "#86efac"
+        : "#fda4af";
+
+      connectionStatus.style.borderColor = connected
+        ? "#315b50"
+        : "#824253";
+    }
+
+    async function loadDictionary() {
+      try {
+        const response = await fetch(`${API_URL}/api/words`);
+
+        if (!response.ok) {
+          throw new Error("Dictionary request failed");
+        }
+
+        const data = await response.json();
+
+        // Normalize, deduplicate and sort for display.
+        words = [...new Set(
+          data.words.map(word => word.toLowerCase())
+        )].sort();
+
+        setConnection(true);
+        dictionaryCount.textContent = `${words.length} unique words`;
+        renderDictionary();
+        renderIdleList();
+      } catch (error) {
+        setConnection(false);
+        dictionaryCount.textContent = "Connection required";
+        dictionaryList.textContent =
+          "Could not load words. Check the Render URL and backend logs.";
+      }
+    }
+
+    function renderDictionary() {
+      dictionaryList.replaceChildren();
+
+      words.forEach((word, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "dictionary-item";
+
+        const name = document.createElement("strong");
+        name.textContent = word;
+
+        const position = document.createElement("span");
+        position.textContent = `Index ${index}`;
+
+        button.append(name, position);
+
+        button.addEventListener("click", () => {
+          wordInput.value = word;
+          searchForm.requestSubmit();
+          $("lab").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        dictionaryList.appendChild(button);
+      });
+    }
+
+    function renderIdleList() {
+      visualization.replaceChildren();
+
+      words.forEach((word, index) => {
+        const card = createWordCard(word, index, "");
+        visualization.appendChild(card);
+      });
+
+      $("lowValue").textContent = "—";
+      $("middleValue").textContent = "—";
+      $("highValue").textContent = "—";
+      progressBar.style.width = "0%";
+    }
+
+    function createWordCard(word, index, role) {
+      const card = document.createElement("div");
+      card.className = "word-card";
+
+      const position = document.createElement("span");
+      position.className = "index";
+      position.textContent = `INDEX ${index}`;
+
+      const name = document.createElement("span");
+      name.className = "word";
+      name.textContent = word;
+
+      const label = document.createElement("span");
+      label.className = "role";
+      label.textContent = role;
+
+      card.append(position, name, label);
+      return card;
+    }
+
+    function makeExplanation(title, message, label = "SEARCH EXPLANATION") {
+      explanation.replaceChildren();
+
+      const badge = document.createElement("span");
+      badge.className = "step-label";
+      badge.textContent = label;
+
+      const heading = document.createElement("h4");
+      heading.textContent = title;
+
+      const paragraph = document.createElement("p");
+      paragraph.textContent = message;
+
+      explanation.append(badge, heading, paragraph);
+    }
+
+    function showStep(index) {
+      if (index < 0 || index >= searchSteps.length) return;
+
+      currentStep = index;
+
+      const step = searchSteps[index];
+      const isTarget = step.middle_word.toLowerCase() === targetWord;
+
+      $("lowValue").textContent = step.low;
+      $("middleValue").textContent = step.middle;
+      $("highValue").textContent = step.high;
+
+      stepCounter.textContent =
+        `Step ${index + 1} of ${searchSteps.length}`;
+
+      progressBar.style.width =
+        `${((index + 1) / searchSteps.length) * 100}%`;
+
+      visualization.replaceChildren();
+
+      words.forEach((word, position) => {
+        let role = "";
+
+        if (position < step.low || position > step.high) {
+          role = "ELIMINATED";
+        } else if (position === step.middle) {
+          role = isTarget ? "TARGET FOUND" : "MIDDLE";
+        } else if (position === step.low && position === step.high) {
+          role = "LOW / HIGH";
+        } else if (position === step.low) {
+          role = "LOW";
+        } else if (position === step.high) {
+          role = "HIGH";
+        }
+
+        const card = createWordCard(word, position, role);
+
+        if (position < step.low || position > step.high) {
+          card.classList.add("outside");
+        } else {
+          card.classList.add("in-range");
+        }
+
+        if (position === step.middle) {
+          card.classList.add(isTarget ? "found" : "middle");
+        }
+
+        visualization.appendChild(card);
+      });
+
+      if (isTarget) {
+        makeExplanation(
+          "🎉 Target word found!",
+          `The middle word is "${step.middle_word}", which matches "${targetWord}". The algorithm has found the target and can stop.`,
+          "SUCCESS"
+        );
+      } else if (targetWord < step.middle_word.toLowerCase()) {
+        makeExplanation(
+          "The target belongs to the left half",
+          `"${targetWord}" comes before "${step.middle_word}" alphabetically. The middle word and everything to its right can be excluded. The next high index becomes ${step.middle - 1}.`
+        );
+      } else {
+        makeExplanation(
+          "The target belongs to the right half",
+          `"${targetWord}" comes after "${step.middle_word}" alphabetically. The middle word and everything to its left can be excluded. The next low index becomes ${step.middle + 1}.`
+        );
+      }
+
+      prevButton.disabled = playing || index === 0;
+      nextButton.disabled = playing || index === searchSteps.length - 1;
+      resetButton.disabled = playing;
+      playButton.disabled = playing || searchSteps.length === 0;
+      playButton.textContent =
+        index === searchSteps.length - 1
+          ? "↻ Play Again"
+          : "▶ Start Animation";
+    }
+
+    function showSearchResult(data) {
+      resultBox.replaceChildren();
+      resultBox.className = "result";
+
+      if (data.found) {
+        resultBox.classList.add("found");
+
+        const heading = document.createElement("h4");
+        heading.textContent = `✓ ${data.word}`;
+
+        const meaning = document.createElement("p");
+        meaning.textContent = data.meaning;
+
+        resultBox.append(heading, meaning);
+      } else {
+        resultBox.classList.add("not-found");
+
+        const heading = document.createElement("h4");
+        heading.textContent = "Word not found";
+
+        const message = document.createElement("p");
+        message.textContent =
+          `"${targetWord}" is not in this dictionary. Try one of the listed words.`;
+
+        resultBox.append(heading, message);
+      }
+    }
+
+    async function searchWord(word) {
+      stopAnimation();
+      const thisRequest = ++requestNumber;
+
+      targetWord = word.trim().toLowerCase();
+      currentStep = -1;
+      searchSteps = [];
+      found = false;
+
+      searchButton.disabled = true;
+      searchButton.textContent = "Searching...";
+
+      stepCounter.textContent = "Preparing visualization";
+      visualization.replaceChildren();
+      $("lowValue").textContent = "—";
+      $("middleValue").textContent = "—";
+      $("highValue").textContent = "—";
+      progressBar.style.width = "0%";
+
+      resultBox.className = "result";
+      resultBox.textContent = "Finding the word...";
+      makeExplanation(
+        "Preparing your search",
+        "The backend will return the search range and middle word for each step."
+      );
+
+      try {
+        const response = await fetch(`${API_URL}/api/search`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ word: targetWord })
+        });
+
+        const data = await response.json();
+
+        if (thisRequest !== requestNumber) return;
+
+        if (!response.ok) {
+          throw new Error(data.message || "Search request failed.");
+        }
+
+        if (!Array.isArray(data.steps)) {
+          throw new Error("The backend did not return visualization steps.");
+        }
+
+        searchSteps = data.steps;
+        found = data.found;
+        showSearchResult(data);
+
+        if (searchSteps.length > 0) {
+          showStep(0);
+          playButton.disabled = false;
+          resetButton.disabled = false;
+          nextButton.disabled = searchSteps.length <= 1;
+          prevButton.disabled = true;
+          playButton.textContent = "▶ Start Animation";
+        } else {
+          stepCounter.textContent = "No search steps";
+          visualization.textContent = "No words to visualize.";
+          makeExplanation(
+            "No steps to show",
+            "Check that the backend dictionary contains words and the API is returning the expected data."
+          );
+        }
+      } catch (error) {
+        if (thisRequest !== requestNumber) return;
+
+        resultBox.className = "result not-found";
+        resultBox.textContent =
+          `${error.message} Check the Render URL and backend status.`;
+
+        stepCounter.textContent = "Search unavailable";
+        makeExplanation(
+          "Unable to load the search",
+          "Confirm that the Render service is running and API_URL contains the correct address."
+        );
+      } finally {
+        if (thisRequest === requestNumber) {
+          searchButton.disabled = false;
+          searchButton.textContent = "Search Word →";
+        }
+      }
+    }
+
+    function advanceAnimation() {
+      if (!playing) return;
+
+      if (currentStep >= searchSteps.length - 1) {
+        stopAnimation();
+        showStep(currentStep);
+        makeExplanation(
+          found ? "🎉 Search complete!" : "Search complete",
+          found
+            ? `The word "${targetWord}" has been found. You can replay the animation or review each step.`
+            : `The word "${targetWord}" was not found. The algorithm has finished its search.`,
+          "COMPLETED"
+        );
+        return;
+      }
+
+      showStep(currentStep + 1);
+
+      timer = setTimeout(
+        advanceAnimation,
+        Number(speedSelect.value)
+      );
+    }
+
+    function startAnimation() {
+      if (!searchSteps.length) return;
+
+      if (currentStep === searchSteps.length - 1) {
+        currentStep = -1;
+        showStep(0);
+      }
+
+      playing = true;
+      playButton.disabled = false;
+      playButton.textContent = "Ⅱ Playing...";
+      prevButton.disabled = true;
+      nextButton.disabled = true;
+      resetButton.disabled = true;
+
+      timer = setTimeout(
+        advanceAnimation,
+        Number(speedSelect.value)
+      );
+    }
+
+    function resetAnimation() {
+      stopAnimation();
+
+      if (!searchSteps.length) return;
+
+      showStep(0);
+      makeExplanation(
+        "Animation reset",
+        "The visualization is back at the first search step. Press Next Step or Start Animation to continue."
+      );
+    }
+
+    searchForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const word = wordInput.value.trim();
+
+      if (!word) return;
+
+      searchWord(word);
+    });
+
+    playButton.addEventListener("click", () => {
+      if (playing) return;
+      startAnimation();
+    });
+
+    prevButton.addEventListener("click", () => {
+      stopAnimation();
+
+      if (currentStep > 0) {
+        showStep(currentStep - 1);
+      }
+    });
+
+    nextButton.addEventListener("click", () => {
+      stopAnimation();
+
+      if (currentStep < searchSteps.length - 1) {
+        showStep(currentStep + 1);
+      }
+    });
+
+    resetButton.addEventListener("click", resetAnimation);
+
+    loadDictionary();
+  </script>
 </body>
 </html>

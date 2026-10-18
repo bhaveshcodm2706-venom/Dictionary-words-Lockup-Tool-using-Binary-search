@@ -1,181 +1,103 @@
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import os
 
 app = Flask(__name__)
-
-# For a student project, allow the StackBlitz frontend to connect.
-# In production, restrict CORS to your actual frontend domain.
 CORS(app)
 
-# Dictionary data: each word has a meaning.
-DICTIONARY = [
-    {
-        "word": "Algorithm",
-        "meaning": "A step-by-step procedure for solving a problem or performing a computation."
-    },
-    {
-        "word": "Array",
-        "meaning": "A data structure that stores elements in an indexed sequence."
-    },
-    {
-        "word": "Binary",
-        "meaning": "A number system that uses only two digits: 0 and 1."
-    },
-    {
-        "word": "Book",
-        "meaning": "A collection of written or printed pages bound together."
-    },
-    {
-        "word": "Code",
-        "meaning": "Instructions written in a programming language for a computer to execute."
-    },
-    {
-        "word": "Computer",
-        "meaning": "An electronic device that processes data according to instructions."
-    },
-    {
-        "word": "Database",
-        "meaning": "An organized collection of data that can be accessed and managed."
-    },
-    {
-        "word": "Data",
-        "meaning": "Facts and information collected for reference or analysis."
-    },
-    {
-        "word": "Disk",
-        "meaning": "A storage device or medium used to store digital information."
-    },
-    {
-        "word": "Function",
-        "meaning": "A reusable block of code designed to perform a particular task."
-    },
-    {
-        "word": "Internet",
-        "meaning": "A worldwide network connecting computers and other devices."
-    },
-    {
-        "word": "Loop",
-        "meaning": "A programming structure that repeats a block of instructions."
-    },
-    {
-        "word": "Python",
-        "meaning": "A high-level programming language known for its readable syntax."
-    },
-    {
-        "word": "Search",
-        "meaning": "The process of finding a specific item in a collection."
-    }
-]
+# Dictionary words are stored in alphabetical order.
+# Each word appears only once.
+dictionary = {
+    "algorithm": "A step-by-step procedure for solving a problem.",
+    "binary": "A number system that uses only 0 and 1.",
+    "computer": "An electronic device that processes data.",
+    "database": "An organized collection of information.",
+    "function": "A reusable block of code that performs a task.",
+    "internet": "A global network of interconnected computers.",
+    "keyword": "A reserved word with a special meaning in a programming language.",
+    "loop": "A programming structure that repeats instructions.",
+    "python": "A high-level programming language.",
+    "search": "The process of finding a particular item."
+}
 
-# Binary search requires the words to be sorted.
-DICTIONARY.sort(key=lambda item: item["word"].casefold())
+# Sorted list ensures binary search works correctly.
+words = sorted(dictionary.keys())
 
 
-def binary_search(target):
-    """Return the real binary-search steps and the matching definition."""
-
-    target = target.strip().casefold()
-    words = [item["word"] for item in DICTIONARY]
-
+def binary_search(search_word):
     low = 0
     high = len(words) - 1
     steps = []
-    comparison_number = 0
 
     while low <= high:
         middle = (low + high) // 2
         middle_word = words[middle]
-        comparison_number += 1
 
-        # Record each actual comparison made by the algorithm.
-        step = {
+        # Save the current search range for visualization.
+        steps.append({
             "low": low,
-            "mid": middle,
             "high": high,
-            "word": middle_word,
-            "comparison_number": comparison_number,
-            "explanation": ""
-        }
-
-        middle_key = middle_word.casefold()
-
-        if middle_key == target:
-            step["explanation"] = (
-                f'The middle word "{middle_word}" matches '
-                f'the target. The word has been found.'
+            "middle": middle,
+            "middle_word": middle_word,
+            "explanation": (
+                f"Check the middle word: '{middle_word}'. "
+                f"The current search range is positions {low} to {high}."
             )
-            steps.append(step)
+        })
 
+        if middle_word == search_word:
             return {
                 "found": True,
                 "word": middle_word,
-                "meaning": DICTIONARY[middle]["meaning"],
-                "index": middle,
-                "comparisons": comparison_number,
+                "meaning": dictionary[middle_word],
                 "steps": steps
             }
 
-        elif target < middle_key:
-            step["explanation"] = (
-                f'"{target}" comes before "{middle_word}". '
-                f'Discard the upper half and search the left half.'
-            )
-            steps.append(step)
+        elif search_word < middle_word:
             high = middle - 1
-
         else:
-            step["explanation"] = (
-                f'"{target}" comes after "{middle_word}". '
-                f'Discard the lower half and search the right half.'
-            )
-            steps.append(step)
             low = middle + 1
 
     return {
         "found": False,
-        "word": target,
+        "word": search_word,
         "meaning": "",
-        "index": -1,
-        "comparisons": comparison_number,
         "steps": steps
     }
 
 
-@app.route("/", methods=["GET"])
+@app.route("/")
 def home():
     return jsonify({
-        "message": "LexiSearch Python API is running.",
-        "endpoints": ["/api/search", "/api/words"]
+        "message": "Dictionary Binary Search API is running."
     })
-
-
-@app.route("/api/search", methods=["POST"])
-def search_word():
-    data = request.get_json(silent=True) or {}
-    word = data.get("word", "")
-
-    if not isinstance(word, str) or not word.strip():
-        return jsonify({"error": "Please provide a valid word."}), 400
-
-    result = binary_search(word)
-
-    # Send the actual sorted words to the visualization.
-    result["words"] = [item["word"] for item in DICTIONARY]
-
-    return jsonify(result)
 
 
 @app.route("/api/words", methods=["GET"])
 def get_words():
-    return jsonify({
-        "words": DICTIONARY,
-        "total": len(DICTIONARY)
-    })
+    return jsonify({"words": words})
+
+
+@app.route("/api/search", methods=["POST"])
+def search():
+    data = request.get_json(silent=True) or {}
+    search_word = data.get("word", "")
+
+    if not isinstance(search_word, str) or not search_word.strip():
+        return jsonify({
+            "found": False,
+            "word": "",
+            "meaning": "",
+            "steps": [],
+            "message": "Please enter a word."
+        }), 400
+
+    search_word = search_word.strip().lower()
+    result = binary_search(search_word)
+    return jsonify(result)
 
 
 if __name__ == "__main__":
-    import os
-
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
