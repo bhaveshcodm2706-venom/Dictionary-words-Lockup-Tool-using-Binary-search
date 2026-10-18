@@ -1,12 +1,112 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1020">
   <title>Dictionary word Lockup Tool using Binary search</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  
+  <main class="app">
+    <header class="header">
+      <div class="logo">♧</div>
+      <div>
+        <h1>LexiSearch</h1>
+        <p class="subtitle">DICTIONARY · BINARY SEARCH LAB</p>
+      </div>
+      <span class="status">● Interactive</span>
+    </header>
+
+    <section class="intro">
+      <h2>Find any word.</h2>
+      <p>Explore word meanings and see how binary search finds a match.</p>
+
+      <form id="searchForm" class="search-bar">
+        <span class="search-icon">⌕</span>
+        <input id="wordInput" type="text"
+          placeholder="Enter a word, e.g. algorithm"
+          autocomplete="off" required>
+        <button type="submit" id="searchButton">Search</button>
+      </form>
+      <p id="message" class="message" aria-live="polite">
+        Enter a word to begin.
+      </p>
+    </section>
+
+    <section class="index-grid">
+      <div class="index-card">
+        <span>Low</span>
+        <strong id="lowValue">—</strong>
+      </div>
+      <div class="index-card middle-card">
+        <span>Middle</span>
+        <strong id="middleValue">—</strong>
+      </div>
+      <div class="index-card">
+        <span>High</span>
+        <strong id="highValue">—</strong>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <h3>Search visualization</h3>
+        <span class="step-badge" id="stepBadge">Ready</span>
+      </div>
+
+      <div id="wordArray" class="word-array">
+        <p class="empty-state">Search for a word to visualize the algorithm.</p>
+      </div>
+
+      <p id="stepExplanation" class="explanation">
+        The algorithm compares the target word with the middle word.
+      </p>
+
+      <div class="controls">
+        <button type="button" id="previousButton" class="secondary" disabled>
+          ← Previous
+        </button>
+        <button type="button" id="playButton" disabled>
+          ▶ Play
+        </button>
+        <button type="button" id="nextButton" disabled>
+          Next Step →
+        </button>
+        <button type="button" id="resetButton" class="secondary" disabled>
+          ↻ Reset
+        </button>
+      </div>
+    </section>
+
+    <section class="panel definition-panel">
+      <h3>Word definition</h3>
+      <h2 id="resultWord">Waiting for a search...</h2>
+      <p id="definition">The word meaning will appear here.</p>
+      <div class="result-meta">
+        <span id="comparisonCount">Comparisons: 0</span>
+        <span id="resultStatus">Status: Ready</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>How binary search works</h3>
+      <ol class="instructions">
+        <li>Start with the lowest and highest indexes.</li>
+        <li>Calculate the middle index.</li>
+        <li>Compare the middle word with the target.</li>
+        <li>Discard half of the remaining search range.</li>
+        <li>Repeat until the word is found or the range is empty.</li>
+      </ol>
+    </section>
+
+    <footer>
+      <p>Built with HTML, CSS, JavaScript and Python Flask.</p>
+      <p>Binary Search · Data Structures Project</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
