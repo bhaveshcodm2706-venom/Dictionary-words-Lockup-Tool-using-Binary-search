@@ -3,7 +3,7 @@
  * Replace this URL with your deployed Render backend URL.
  * Example: https://your-dictionary-api.onrender.com
  */
-const API_URL = " https://dictionary-words-lockup-tool-using-w7xc.onrender.com";
+const API_URL = "https://dictionary-words-lockup-tool-using-w7xc.onrender.com";
 
 const form = document.getElementById("searchForm");
 const input = document.getElementById("wordInput");
